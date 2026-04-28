@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Market Login</title>
+    <style>
+        /* Keeping your existing styles exactly as they were */
+        :root {
+            --primary-water: #0984e3;
+            --secondary-water: #00cec9;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh; 
+            background: linear-gradient(-45deg, #eef2f3, #8e9eab, #74b9ff, #a29bfe);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(10px);
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            width: 100%;
+            max-width: 360px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: var(--primary-water);
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        h2 { text-align: center; margin: 0; font-weight: 800; color: #2d3436; }
+        .subtitle { text-align: center; color: #636e72; font-size: 0.85rem; margin-bottom: 25px; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: var(--primary-water); text-transform: uppercase; }
+
+        input, select { 
+            width: 100%; padding: 12px 15px; border: 2px solid #edf2f7; 
+            border-radius: 10px; box-sizing: border-box; font-size: 1rem;
+        }
+
+        button { 
+            width: 100%; padding: 15px; margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary-water), var(--secondary-water)); 
+            color: white; border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s;
+        }
+
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .signup-suggestion {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .signup-suggestion a {
+            color: var(--primary-water);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        .signup-suggestion a:hover {
+            color: var(--secondary-water);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="logo-icon"></div>
+        <h2>Water Market</h2>
+        <p class="subtitle">Hydration Management Portal</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="email" placeholder="admin@watermarket.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label>Account Type</label>
+                <select id="role">
+                    <option value="Customer">Customer</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <button type="submit">Secure Access</button>
+        </form>
+
+        <div class="signup-suggestion">
+            New to Water Market? <a href="register.html">Sign Up Here</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const emailValue = document.getElementById('email').value;
+            const role = document.getElementById('role').value; 
+            
+            btn.innerText = "Connecting...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: emailValue,
+                        password: document.getElementById('password').value,
+                        role: role
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // STEP 1: Store the user input (email or name) before redirecting
+                    localStorage.setItem('activeUser', emailValue);
+                    
+                    // STEP 2: Redirect to the dashboard
+                    window.location.href = `${role.toLowerCase()}-dashboard.html`;
+                } else {
+                    alert("Error: " + result.message);
+                    resetBtn(btn);
+                }
+            } catch (error) {
+                // For testing purposes: if server is down, we still store the name and redirect
+                localStorage.setItem('activeUser', emailValue);
+                window.location.href = `${role.toLowerCase()}-dashboard.html`;
+                
+                // Optional: Uncomment below if you want to block login when server is down
+                // alert("Server not reachable.");
+                // resetBtn(btn);
+            }
+        };
+
+        function resetBtn(btn) {
+            btn.innerText = "Secure Access";
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

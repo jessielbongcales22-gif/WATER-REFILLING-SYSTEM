@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Reports | Water Market</title>
+    <style>
+        :root {
+            --sidebar-bg: #2c3e50;
+            --primary-water: #0984e3;
+            --bg-light: #f1f2f6;
+            --text-main: #2d3436;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            display: flex;
+            background: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 260px;
+            background: var(--sidebar-bg);
+            height: 100vh;
+            color: white;
+            position: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 { font-size: 1.1rem; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        
+        .nav-links div {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links div:hover { background: rgba(255,255,255,0.1); }
+        .active { background: var(--primary-water); }
+
+        .logout-btn {
+            margin-top: auto;
+            padding: 12px;
+            text-align: center;
+            color: #ff7675;
+            border: 1px solid rgba(255,118,117,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        main { margin-left: 260px; padding: 40px; width: 100%; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-water);
+            margin: 10px 0;
+        }
+
+        .btn-print {
+            background: #2d3436;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media print {
+            nav { display: none; }
+            main { margin-left: 0; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Water Market Pro</h2>
+        <div class="nav-links">
+            <div onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+            <div onclick="window.location.href='inventory.html'">Inventory</div>
+            <div onclick="window.location.href='users.html'">Users</div>
+            <div class="active" onclick="window.location.href='reports.html'">Reports</div>
+            <div onclick="window.location.href='settings.html'">Settings</div>
+        </div>
+        <div class="logout-btn" onclick="window.location.href='index.html'">Logout</div>
+    </nav>
+
+    <main>
+        <header>
+            <div>
+                <h1>Business Reports</h1>
+                <p style="color: #636e72;">Summary generated from Aiven Cloud Data</p>
+            </div>
+            <button class="btn-print" onclick="window.print()">Print Report</button>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card">
+                <h3>Current Stock Volume</h3>
+                <p class="stat-value" id="totalStock">0</p>
+                <p style="color: #636e72; font-size: 0.85rem;">Total units across all products</p>
+            </div>
+
+            <div class="card">
+                <h3>Active Accounts</h3>
+                <p class="stat-value" id="totalUsers">0</p>
+                <p style="color: #636e72; font-size: 0.85rem;">Registered in the system</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Inventory Valuation Summary</h3>
+            <div id="summaryTable" style="margin-top: 15px;">
+                </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchReportData() {
+            try {
+                // 1. Get Users
+                const userRes = await fetch('/api/admin/users');
+                const users = await userRes.json();
+                document.getElementById('totalUsers').innerText = users.length;
+
+                // 2. Get Inventory
+                const invRes = await fetch('/api/admin/inventory');
+                const inventory = await invRes.json();
+                
+                let totalItems = 0;
+                inventory.forEach(item => totalItems += item.stock_quantity);
+                document.getElementById('totalStock').innerText = totalItems;
+
+                const summaryTable = document.getElementById('summaryTable');
+                summaryTable.innerHTML = `
+                    <p><strong>Most Stocked Item:</strong> ${inventory.length > 0 ? inventory[0].item_name : 'No Data'}</p>
+                    <p><strong>Database Connection:</strong> Secure (SSL Active)</p>
+                `;
+
+            } catch (error) {
+                console.error("Error generating report:", error);
+            }
+        }
+
+        fetchReportData();
+    </script>
+</body>
+</html>

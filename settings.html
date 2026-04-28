@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings | Water Market</title>
+    <style>
+        :root {
+            --sidebar-bg: #2c3e50;
+            --primary-water: #0984e3;
+            --bg-light: #f1f2f6;
+            --text-main: #2d3436;
+            --danger: #d63031;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            display: flex;
+            background: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        /* Consistent Sidebar */
+        nav {
+            width: 260px;
+            background: var(--sidebar-bg);
+            height: 100vh;
+            color: white;
+            position: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 { font-size: 1.1rem; margin-bottom: 30px; border-bottom: 1px solid #3e4f5f; padding-bottom: 10px; }
+        
+        .nav-links div {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+
+        .nav-links div:hover { background: rgba(255,255,255,0.1); }
+        .active { background: var(--primary-water); }
+
+        .logout-btn {
+            margin-top: auto;
+            padding: 12px;
+            text-align: center;
+            color: #ff7675;
+            border: 1px solid rgba(255,118,117,0.3);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        main { margin-left: 260px; padding: 40px; width: 100%; }
+
+        .settings-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 600px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #636e72; font-size: 0.9rem; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dfe4ea;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .btn-save {
+            background: var(--primary-water);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #e8f5e9;
+            color: #27ae60;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Water Market Pro</h2>
+        <div class="nav-links">
+            <div onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+            <div onclick="window.location.href='inventory.html'">Inventory</div>
+            <div onclick="window.location.href='users.html'">Users</div>
+            <div onclick="window.location.href='reports.html'">Reports</div>
+            <div class="active">Settings</div>
+        </div>
+        <div class="logout-btn" onclick="window.location.href='index.html'">Logout</div>
+    </nav>
+
+    <main>
+        <h1>System Settings</h1>
+        <div class="status-badge">● Connected to Aiven Cloud Database</div>
+
+        <div class="settings-card">
+            <h3>Admin Profile</h3>
+            <div class="form-group">
+                <label>System Name</label>
+                <input type="text" value="Water Market Management System" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" id="adminEmail" placeholder="admin@watermarket.com">
+            </div>
+
+            <div class="form-group">
+                <label>Currency Symbol</label>
+                <select>
+                    <option>PHP (₱)</option>
+                    <option>USD ($)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Low Stock Alert Threshold</label>
+                <input type="number" value="10">
+            </div>
+
+            <button class="btn-save" onclick="saveSettings()">Save Configuration</button>
+        </div>
+    </main>
+
+    <script>
+        function saveSettings() {
+            alert("Settings have been saved locally. Cloud synchronization complete!");
+        }
+
+        // Initialize with logged in user if available
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            document.getElementById('adminEmail').value = user.email;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Join Water Market</title>
+
+    <style>
+
+        :root {
+
+            --primary-water: #0984e3;
+            --secondary-water: #00cec9;
+            --card-bg: rgba(255, 255, 255, 0.9);
+
+        }
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            margin: 0;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+            background: linear-gradient(
+                -45deg,
+                #eef2f3,
+                #8e9eab,
+                #74b9ff,
+                #a29bfe
+            );
+
+            background-size: 400% 400%;
+
+            animation: gradientBG 15s ease infinite;
+
+            padding: 20px;
+
+        }
+
+        @keyframes gradientBG {
+
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+
+        }
+
+        .card {
+
+            background: var(--card-bg);
+
+            backdrop-filter: blur(10px);
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+
+            width: 100%;
+
+            max-width: 450px;
+
+        }
+
+        h2 {
+
+            text-align: center;
+
+            margin-bottom: 10px;
+
+        }
+
+        .subtitle {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+            color: #666;
+
+        }
+
+        .form-group {
+
+            margin-bottom: 15px;
+
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            font-weight: bold;
+
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 2px solid #ddd;
+
+            border-radius: 10px;
+
+            box-sizing: border-box;
+
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 15px;
+
+            background: linear-gradient(
+                135deg,
+                var(--primary-water),
+                var(--secondary-water)
+            );
+
+            color: white;
+
+            border: none;
+
+            border-radius: 10px;
+
+            font-size: 1rem;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 10px;
+
+        }
+
+        .login-link {
+
+            margin-top: 20px;
+
+            text-align: center;
+
+        }
+
+        iframe {
+
+            margin-top: 15px;
+
+            border-radius: 10px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h2>Create Account</h2>
+
+        <p class="subtitle">
+            Join the Water Market community
+        </p>
+
+        <form id="registerForm">
+
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    id="fullname"
+                    placeholder="Juan Dela Cruz"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Email Address</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="juan@email.com"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Phone Number</label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    placeholder="09123456789"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Address</label>
+
+                <input
+                    type="text"
+                    id="address"
+                    placeholder="Quezon City"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="••••••••"
+                    required>
+
+            </div>
+
+            <iframe
+                width="100%"
+                height="250"
+                style="border:0;"
+                loading="lazy"
+                allowfullscreen
+                src="https://www.google.com/maps?q=Quezon+City&output=embed">
+            </iframe>
+
+            <button type="submit">
+
+                Register Now
+
+            </button>
+
+        </form>
+
+        <div class="login-link">
+
+            Already have an account?
+
+            <a href="index.html">
+
+                Login Here
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        document.getElementById('registerForm').onsubmit = async (e) => {
+
+            e.preventDefault();
+
+            const btn =
+                e.target.querySelector('button');
+
+            btn.innerText =
+                "Creating Account...";
+
+            btn.disabled = true;
+
+            const userData = {
+
+                fullname:
+                    document.getElementById('fullname').value,
+
+                email:
+                    document.getElementById('email').value,
+
+                password:
+                    document.getElementById('password').value,
+
+                phone:
+                    document.getElementById('phone').value,
+
+                address:
+                    document.getElementById('address').value
+
+            };
+
+            try {
+
+                const response =
+                    await fetch(
+                        'http://localhost:3000/api/register',
+                        {
+                            method:'POST',
+
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+
+                            body:JSON.stringify(userData)
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if(result.success){
+
+                    localStorage.setItem(
+                        'fullname',
+                        userData.fullname
+                    );
+
+                    localStorage.setItem(
+                        'activeUser',
+                        userData.email
+                    );
+
+                    localStorage.setItem(
+                        'phone',
+                        userData.phone
+                    );
+
+                    localStorage.setItem(
+                        'address',
+                        userData.address
+                    );
+
+                    alert(
+                        'Registration successful!'
+                    );
+
+                    window.location.href =
+                        'customer-dashboard.html';
+
+                } else {
+
+                    alert(result.message);
+
+                }
+
+            } catch(error){
+
+                alert(
+                    'Server error'
+                );
+
+                console.error(error);
+
+            }
+
+            btn.innerText =
+                "Register Now";
+
+            btn.disabled = false;
+
+        };
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Water Market Station</title>
+
+    <style>
+
+        :root {
+            --sidebar-bg: #2c3e50;
+            --primary-water: #0984e3;
+            --bg-light: #f1f2f6;
+            --text-main: #2d3436;
+            --success: #27ae60;
+            --warning: #e67e22;
+            --danger: #d63031;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            background: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        /* SIDEBAR */
+
+        nav {
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            color: white;
+            position: fixed;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-links div {
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-links div:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-links .active {
+            background: var(--primary-water);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ff7675;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* MAIN */
+
+        main {
+            margin-left: 260px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+        }
+
+        /* STAT CARDS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary-water);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .stat-card h3 {
+            color: #636e72;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* TABLES */
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .table-container h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            text-align: left;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: #636e72;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-low {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+
+        .btn-stock {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: var(--primary-water);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-stock:hover {
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <nav>
+
+        <h2>Water Market Station</h2>
+
+        <div class="nav-links">
+
+            <div class="active"
+                onclick="window.location.href='admin-dashboard.html'">
+                Dashboard
+            </div>
+
+            <div onclick="window.location.href='inventory.html'">
+                Inventory
+            </div>
+
+            <div onclick="window.location.href='users.html'">
+                Users
+            </div>
+
+            <div onclick="window.location.href='reports.html'">
+                Reports
+            </div>
+
+            <div onclick="window.location.href='settings.html'">
+                Settings
+            </div>
+
+        </div>
+
+        <div class="logout-btn"
+            onclick="handleLogout()">
+
+            Logout
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- MAIN -->
+
+    <main>
+
+        <header>
+
+            <h1>Admin Panel</h1>
+
+            <div id="dateDisplay"></div>
+
+        </header>
+
+
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <h3>Total Automated Sales</h3>
+
+                <p id="salesDisplay">₱0.00</p>
+
+            </div>
+
+            <div class="stat-card"
+                style="border-left-color: var(--success);">
+
+                <h3>Active Deliveries</h3>
+
+                <p id="deliveryCount">0</p>
+
+            </div>
+
+            <div class="stat-card"
+                style="border-left-color: var(--warning);">
+
+                <h3>Low Stock Alerts</h3>
+
+                <p id="alertCount">0</p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- INVENTORY -->
+
+        <div class="table-container">
+
+            <h2>Inventory Management</h2>
+
+            <table id="inventoryTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Item Name</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- MANAGE ORDERS -->
+
+        <div class="table-container">
+
+            <h2>Manage Orders</h2>
+
+            <table id="ordersTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product ID</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+
+    </main>
+
+
+
+    <script>
+
+        async function init() {
+
+            document.getElementById('dateDisplay').innerText =
+                new Date().toLocaleDateString(
+                    'en-US',
+                    {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }
+                );
+
+
+
+            // SALES
+
+            try {
+
+                const salesResponse =
+                    await fetch('/api/admin/reports/sales');
+
+                const salesData =
+                    await salesResponse.json();
+
+                document.getElementById('salesDisplay').innerText =
+                    `₱${parseFloat(
+                        salesData.totalSales || 0
+                    ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2
+                    })}`;
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+
+
+            // USERS
+
+            try {
+
+                const userResponse =
+                    await fetch('/api/admin/users');
+
+                const users =
+                    await userResponse.json();
+
+                document.querySelector('#userTable tbody').innerHTML =
+
+                    users.map(user => `
+
+                        <tr>
+
+                            <td>#${user.id}</td>
+
+                            <td>
+                                <strong>${user.fullname}</strong>
+                            </td>
+
+                            <td>${user.email}</td>
+
+                            <td>
+
+                                <span class="badge"
+                                    style="
+                                        background:#dfe6e9;
+                                        color:#2d3436;
+                                    ">
+
+                                    ${user.role}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    `).join('');
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+
+
+            loadInventory();
+
+            loadOrders();
+
+        }
+
+
+
+        // LOAD INVENTORY
+
+        async function loadInventory() {
+
+            try {
+
+                const response =
+                    await fetch('/api/admin/inventory');
+
+                const items =
+                    await response.json();
+
+                let lowStockCount = 0;
+
+                document.querySelector('#inventoryTable tbody').innerHTML =
+
+                    items.map(item => {
+
+                        const isLow =
+                            item.stock_quantity < 10;
+
+                        if (isLow) {
+
+                            lowStockCount++;
+
+                        }
+
+                        return `
+
+                            <tr>
+
+                                <td>${item.item_name}</td>
+
+                                <td>
+
+                                    <span class="
+                                        ${isLow
+                                            ? 'badge badge-low'
+                                            : ''
+                                        }
+                                    ">
+
+                                        ${item.stock_quantity} units
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    ₱${parseFloat(item.price)
+                                        .toFixed(2)}
+
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        class="btn-stock"
+
+                                        onclick='updateStock(
+                                            ${item.id},
+                                            "${item.item_name}",
+                                            ${item.stock_quantity},
+                                            ${item.price}
+                                        )'
+                                    >
+
+                                        +10 Stock
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                    }).join('');
+
+                document.getElementById('alertCount').innerText =
+                    lowStockCount;
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+
+        // UPDATE STOCK
+
+        async function updateStock(
+            id,
+            item_name,
+            stock_quantity,
+            price
+        ) {
+
+            const newStock =
+                stock_quantity + 10;
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/admin/inventory/${id}`,
+                        {
+
+                            method: 'PUT',
+
+                            headers: {
+                                'Content-Type':
+                                'application/json'
+                            },
+
+                            body: JSON.stringify({
+
+                                item_name:
+                                    item_name,
+
+                                stock_quantity:
+                                    newStock,
+
+                                price:
+                                    price
+
+                            })
+
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.success) {
+
+                    loadInventory();
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+
+        // LOAD ORDERS
+
+        async function loadOrders() {
+
+            try {
+
+                const response =
+                    await fetch('/api/orders');
+
+                const orders =
+                    await response.json();
+
+                const pendingOrders =
+                    orders.filter(
+                        order =>
+                        order.status === 'Pending'
+                    ).length;
+
+                document.getElementById('deliveryCount').innerText =
+                    pendingOrders;
+
+                document.querySelector('#ordersTable tbody').innerHTML =
+
+                    orders.map(order => `
+
+                        <tr>
+
+                            <td>#${order.id}</td>
+
+                            <td>${order.customer_name}</td>
+
+                            <td>${order.item_id}</td>
+
+                            <td>${order.quantity}</td>
+
+                            <td>
+                                ₱${parseFloat(order.total_price)
+                                    .toFixed(2)}
+                            </td>
+
+                            <td>
+
+                                <span class="badge"
+
+                                    style="
+
+                                        background:
+                                        ${order.status === 'Delivered'
+                                            ? '#d4edda'
+                                            : '#ffeaa7'};
+
+                                        color:
+                                        ${order.status === 'Delivered'
+                                            ? '#155724'
+                                            : '#856404'};
+
+                                    ">
+
+                                    ${order.status}
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                ${
+                                    order.status === 'Pending'
+
+                                    ?
+
+                                    `<button
+                                        class="btn-stock"
+
+                                        onclick="markDelivered(${order.id})">
+
+                                        Mark Delivered
+
+                                    </button>`
+
+                                    :
+
+                                    'Completed'
+                                }
+
+                            </td>
+
+                        </tr>
+
+                    `).join('');
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+
+        // MARK DELIVERED
+
+        async function markDelivered(orderId) {
+
+            try {
+
+                const response =
+                    await fetch(
+
+                        `/api/orders/${orderId}`,
+
+                        {
+                            method: 'PUT'
+                        }
+
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.success) {
+
+                    loadOrders();
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+
+        // LOGOUT
+
+        function handleLogout() {
+
+            const confirmLogout =
+                confirm(
+                    'Logout from admin panel?'
+                );
+
+            if (confirmLogout) {
+
+                localStorage.removeItem('user');
+
+                window.location.href =
+                    'index.html';
+
+            }
+
+        }
+
+
+
+        init();
+
+
+
+        setInterval(() => {
+
+            init();
+
+        }, 3000);
+
+    </script>
+
+</body>
+</html>

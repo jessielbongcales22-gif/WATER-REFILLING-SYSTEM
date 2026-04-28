@@ -1,0 +1,274 @@
+```html id="5f8w2m"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | Water Market</title>
+
+    <style>
+
+        :root {
+            --sidebar-bg: #2c3e50;
+            --primary-water: #0984e3;
+            --bg-light: #f1f2f6;
+            --text-main: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            display: flex;
+            background: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        nav {
+            width: 260px;
+            background: var(--sidebar-bg);
+            height: 100vh;
+            color: white;
+            position: fixed;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 {
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .nav-links div {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links div:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-links .active {
+            background: var(--primary-water);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #ff7675;
+            text-align: center;
+            border: 1px solid rgba(255, 118, 117, 0.3);
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #d63031;
+            color: white;
+        }
+
+        main {
+            margin-left: 260px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #636e72;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav>
+
+        <h2>Water Market Pro</h2>
+
+        <div class="nav-links">
+
+            <div onclick="window.location.href='admin-dashboard.html'">
+                Dashboard
+            </div>
+
+            <div onclick="window.location.href='inventory.html'">
+                Inventory
+            </div>
+
+            <div class="active"
+                onclick="window.location.href='users.html'">
+                Users
+            </div>
+
+            <div onclick="window.location.href='reports.html'">
+                Reports
+            </div>
+
+            <div onclick="window.location.href='settings.html'">
+                Settings
+            </div>
+
+        </div>
+
+        <div class="logout-btn"
+            onclick="window.location.href='index.html'">
+
+            Logout
+
+        </div>
+
+    </nav>
+
+    <main>
+
+        <h1>Registered Users</h1>
+
+        <div class="card">
+
+            <table id="userTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>FULL NAME</th>
+                        <th>EMAIL</th>
+                        <th>ADDRESS</th>
+                        <th>PHONE NUMBER</th>
+                        <th>ROLE</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="userBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+    <script>
+
+        async function loadUsers() {
+
+            try {
+
+                const response =
+                    await fetch('/api/admin/users');
+
+                const users =
+                    await response.json();
+
+                const tbody =
+                    document.getElementById('userBody');
+
+                tbody.innerHTML = users.map(u => `
+
+                    <tr>
+
+                        <td>#${u.id}</td>
+
+                        <td>
+                            <strong>${u.fullname}</strong>
+                        </td>
+
+                        <td>${u.email}</td>
+
+                        <td>${u.address || ''}</td>
+
+                        <td>
+                            ${u.phone || u.phone_number || ''}
+                        </td>
+
+                        <td>
+
+                            <span class="badge"
+                                style="
+                                    background: #e1f5fe;
+                                    color: #01579b;
+                                ">
+
+                                ${u.role}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `).join('');
+
+            } catch (err) {
+
+                console.error(
+                    "Error loading users:",
+                    err
+                );
+
+            }
+
+        }
+
+        loadUsers();
+
+    </script>
+
+</body>
+</html>
